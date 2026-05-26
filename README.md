@@ -51,8 +51,14 @@ O processo envolve o raciocínio e análise dos resultados, em que o agente *din
 <br>
 
 ## A lógica
+O código começa com uma série de instruções que serão passadas para os agentes e orquestrador, que deverão responder a pergunta do usuário de acordo com suas especialidades. Se a pergunta for fora de seu escopo, o sistema evitará respondê-la.
 
 ### ORQUESTRADOR
-O sistema funciona com base em um único orquestrador, que, assim que receber o prompt, irá analizar se consegue responder por conta própria. Caso negativo, irá buscar em seus agentes a resposta, podendo utilizar de funções e chaves APIs para consultar seus bancos de dados.
+O sistema funciona com base em um único orquestrador, que, assim que receber o prompt, irá analizar se consegue responder por conta própria. Caso negativo, irá buscar em seus agentes a resposta, podendo utilizar de funções e chaves APIs para consultar seus bancos de dados. Ao ser questionado, o código descobre qual tool o Gemini quer usar e extrai os argumentos que ele sugeriu e executa a função
 
-A função que o descreve importa o Gemini 2.5 Flash, que tem maior cota diária de tokens, e lembra o histórico da conversa. 
+<br>
+
+A função que o descreve importa o Gemini 2.5 Flash, que tem maior cota diária de tokens, e lembra o histórico da conversa. Ele é um modelo rápido e econômico (nos quesitos financeiros, de limites da API (mais requisições por minuto -RPM - e mais tokens por minuto - TPM), tempo (de resposta)) e tem como customizar seu índice de foco, neste caso sendo de 0.3, para que ele evite gerar respostas desconexas do assunto. Há um contador que serve como pausa de segurança para não estourar o limite de requisições por minuto do plano gratuito e é acionado um tratamento amigável para o erro de cota se o usuário digitar rápido demais.
+***
+
+### CALCULADORA

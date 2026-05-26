@@ -5,6 +5,7 @@ from dotenv import load_dotenv #ler arquivos .env (esconder chaves API e senhas)
 from google import genai
 from google.genai import types #importa o SDK oficial para interagir com o Gemini
 import time  #Serve p/ o sleep
+import urllib.parse #URL encoding, transforma caracteres em códigos seguros para a web
 
 base_dir = os.path.dirname(__file__) #FILE: variável interna do Python que sabe o caminho da pasta
 dotenv_path = os.path.join(base_dir, ".env") #Path.dirname: "resume" o caminho dessa pasta
@@ -56,13 +57,12 @@ def main_chat():
     print("Digite 'sair' para encerrar o chat.")
     print("="*40 + "\n")
     
-    # Voltamos para o Flash, que tem maior cota diária de tokens, e lembra o histórico da conversa
     chat = client.chats.create(
-        model="gemini-2.5-flash", #modelo rápido e econômico (nos quesitos financeiros, de limites da API (+ requisições por minuto -RPM - e + tokens por minuto - TPM), tempo (de resposta))
+        model="gemini-2.5-flash", 
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
             tools=[python_calculator, search_tmdb_movie],
-            temperature=0.3 #índice de foco da IA
+            temperature=0.3
         )
     )
     
@@ -81,15 +81,14 @@ def main_chat():
             response = chat.send_message(user_question)
             
             # Loop para lidar com as ferramentas (Calculadora ou TMDB)
-            while response and response.function_calls: #decide se pode lidar sozinho ou se precisa das ferramentas dos agentes
+            while response and response.function_calls:
                 for function_call in response.function_calls:
-                    tool_name = function_call.name #o código descobre qual tool o Gemini quer usar
-                    tool_args = function_call.args #extrai os argumentos que ele sugeriu e executa a função
+                    tool_name = function_call.name 
+                    tool_args = function_call.args 
                     
                     if tool_name in available_tools:
                         tool_result = available_tools[tool_name](**tool_args)
                         
-                        # ⏱️ Pausa de segurança para não estourar o limite de requisições por minuto do plano gratuito
                         time.sleep(2.5)
                         
                         # Devolve o resultado para o modelo
@@ -108,7 +107,7 @@ def main_chat():
             print("\n\n🤖 Sistema interrompido pelo usuário. Até logo!")
             break
         except Exception as e:
-            # Tratamento amigável para o erro de cota se o usuário digitar rápido demais
+
             if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                 print("\n⚠️ O Google limitou a velocidade por estarmos no plano gratuito.")
                 print("Aguarde 15 segundos antes de enviar a próxima mensagem...")
@@ -138,7 +137,6 @@ def python_calculator(expression: str) -> str:
 # ==========================================
 # 3. Filmes - TMDB
 # ==========================================
-import urllib.parse #URL encoding, transforma caracteres em códigos seguros para a web
 
 def search_tmdb_movie(title: str) -> str:
     """Busca informações oficiais de um filme na API do TMDB usando o Token de Acesso de Leitura (JWT)."""
