@@ -124,12 +124,12 @@ if __name__ == "__main__": #O orquestrador (Função main) deve ser excutado pri
 
 def python_calculator(expression: str) -> str:
     """Executa uma expressão matemática em Python de forma segura e retorna o resultado."""
-    import math #o Dict ignora tudo que começa com __ (config. interna do python)
+    import math 
     allowed_names = {k: v for k, v in math.__dict__.items() if not k.startswith("__")}
-    allowed_names.update({"abs": abs, "round": round}) #Inclui funções absolutas do Python que são úteis em matemática
-    try: #eval = a string é executada como código python puro
-        result = eval(expression, {"__builtins__": None}, allowed_names) #builtins: torna indisponíveis as funções padrões do python
-        return f"Resultado exato: {result}" #allowed_names: torna disponíveis as funções/constates permitidas que foram filtradas do Math
+    allowed_names.update({"abs": abs, "round": round})
+    try:
+        result = eval(expression, {"__builtins__": None}, allowed_names)
+        return f"Resultado exato: {result}"
     except Exception as e:
         return f"Erro ao calcular a expressão: {str(e)}" #Se digitar algo errado, retorna mensagem de erro
 

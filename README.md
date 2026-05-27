@@ -62,3 +62,11 @@ A função que o descreve importa o Gemini 2.5 Flash, que tem maior cota diária
 ***
 
 ### CALCULADORA
+Esta função depende de funções específicas da biblioteca Math, que irá auxiliar a calcular contas complexas e a filtrar números e operações no comando que o usuário for inserir.
+
+<br>
+Um exemplo dessas funções é o **Dict**, que ignora tudo que começa com __ (config. interna do python);
+*Variáveis incluem funções absolutas do Python que são úteis em matemática;
+**Eval** = a string é executada como código python puro;
+**builtins**: torna indisponíveis as funções padrões do python;
+**allowed_names**: torna disponíveis as funções/constates permitidas que foram filtradas do Math;
