@@ -3,7 +3,7 @@
 ![AI Robot](https://img.shields.io/badge/%F0%9F%A4%96-Artificial%20Intelligence-4AE8DE.svg?style=for-the-badge)
 
 ## **Sobre**
-Este projeto foi feito para testar e ampliar minhas capacidades de lidar com a tecnologia, que muda constantemente. Diferentes aplicações foram utilizadas, a fim de poder ter resultados mais precisos e completos, ajudando na formação de percepção do usuário sobre assuntos específicos. Por enquanto, há um orquestrador que irá checar os agentes que abordarãos os temas de **zoologia**, **matemática** e **filmes** (utilizando uma API própria do TMDB).
+Este projeto foi feito para testar e ampliar minhas capacidades de lidar com a tecnologia, que muda constantemente. Diferentes aplicações foram utilizadas, a fim de poder ter resultados mais precisos e completos, ajudando na formação de percepção do usuário sobre assuntos específicos. Por enquanto, há um orquestrador que irá checar os agentes que abordarãos os temas de **matemática** e **filmes** (utilizando uma API própria do TMDB).
 
 <br>
 <br>
@@ -66,7 +66,25 @@ Esta função depende de funções específicas da biblioteca Math, que irá aux
 
 <br>
 Um exemplo dessas funções é o **Dict**, que ignora tudo que começa com __ (config. interna do python);
-*Variáveis incluem funções absolutas do Python que são úteis em matemática;
-**Eval** = a string é executada como código python puro;
+**Variáveis** incluem funções absolutas do Python (função nativa (built-in) abs()) que são úteis em matemática;
+**Eval** = a string é executada como código python puro. Isso significa poder considerar apenas as equações presentes.
 **builtins**: torna indisponíveis as funções padrões do python;
-**allowed_names**: torna disponíveis as funções/constates permitidas que foram filtradas do Math;
+**allowed_names**: torna disponíveis apenas as funções permitidas que foram filtradas do Math;
+Por fim, se algo for digitado errado, retornará uma mensagem de erro.
+
+### Filmes - TMDB
+Este agente irá se conectar à API do TMDB para conseguir informações específicas do título do filme que for inserido, mas primeiramente foi preciso criar uma conta no site para ter acesso à chave. Seu código inicia lendo o token que foi retirado do site oficial do TMDB, que se não for compreendido corretamente, irá retornar uma mensagem de erro.
+
+<br>
+
+Por motivos de segurança, o token é escondido dentro do header, e não exposto diretamente no link URL. URL esta que dependenderá da função **urllib**, que codificará o título do filme e irá até o server TMDB, que, se estiver fora do ar por 10 segundos, o código desiste e imprimirá um aviso de erro.
+
+<br>
+
+Ocorrerá uma verificação para ver se a busca deu certo (Status 200), então focará no primeiro resultado e serão extraídas as suas informações.
+
+<br>
+
+Resultados alternativos podem incluir uma mensagem avisando a falta de tradução para português e, num contexto geral, a queda do sistema do Gemini por haver muitas requisições, que impossibilitará de responder a pergunta do usuário.
+
+

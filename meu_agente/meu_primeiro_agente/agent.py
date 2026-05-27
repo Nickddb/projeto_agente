@@ -131,7 +131,7 @@ def python_calculator(expression: str) -> str:
         result = eval(expression, {"__builtins__": None}, allowed_names)
         return f"Resultado exato: {result}"
     except Exception as e:
-        return f"Erro ao calcular a expressão: {str(e)}" #Se digitar algo errado, retorna mensagem de erro
+        return f"Erro ao calcular a expressão: {str(e)}"
 
 
 # ==========================================
@@ -140,8 +140,8 @@ def python_calculator(expression: str) -> str:
 
 def search_tmdb_movie(title: str) -> str:
     """Busca informações oficiais de um filme na API do TMDB usando o Token de Acesso de Leitura (JWT)."""
-    # Lendo o token longo que configuramos no .env
-    API_TOKEN = os.getenv("TMDB_API_TOKEN") #Pega o token do TMDB
+    
+    API_TOKEN = os.getenv("TMDB_API_TOKEN")
     if not API_TOKEN:
         return "Erro: O token TMDB_API_TOKEN não foi encontrado no ambiente."
         
@@ -151,17 +151,16 @@ def search_tmdb_movie(title: str) -> str:
     # URL padrão sem expor a chave nos parâmetros
     url = f"https://api.themoviedb.org/3/search/movie?query={title_encoded}&language=pt-BR"
     
-    # Configuração dos cabeçalhos de autorização exigidos para o Token Longo
     headers = {
         "accept": "application/json",
-        "Authorization": f"Bearer {API_TOKEN}" #O token é escondido dentro do header, e não exposto diretamente no link URL
+        "Authorization": f"Bearer {API_TOKEN}"
     }
     
     try:
-        response = requests.get(url, headers=headers, timeout=10) #urllib codifica o título do filme e vaia té o server TMDB // se estiver fora do ar por 10 segundos, o código desiste
+        response = requests.get(url, headers=headers, timeout=10) 
         data = response.json()
         
-        if response.status_code != 200: #Verifica se a busca deu certo (Status 200), pega oprimeiro resultado e extrai as suas informações
+        if response.status_code != 200:
             return f"Erro na API do TMDB (Status {response.status_code}): {data.get('status_message', 'Sem mensagem')}"
             
         if not data.get('results'):
