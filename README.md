@@ -38,12 +38,8 @@ O processo envolve o raciocínio e análise dos resultados, em que o agente *din
 
 * **ADK** VS **SDK**
 
-    <br>
-
     ADK, **Agent Development Kit**, é focado na criação de agentes autônomos e workflows que diagnostiquem anomalias, leiam logs, e tomem decisões baseadas em objetivos.
 
-    <br>
-    
     SDK, **Software Development Kit**, é a base de tools usada para criar apps para uma determinada plataforma, importar APIs, hospedar um serviço na nuvem, etc. O desenvolvedor tem controle total sobre as lógicas e etapas.
 ***
 
@@ -53,38 +49,49 @@ O processo envolve o raciocínio e análise dos resultados, em que o agente *din
 ## A lógica
 O código começa com uma série de instruções que serão passadas para os agentes e orquestrador, que deverão responder a pergunta do usuário de acordo com suas especialidades. Se a pergunta for fora de seu escopo, o sistema evitará respondê-la.
 
+<br>
+
 ### ORQUESTRADOR
 O sistema funciona com base em um único orquestrador, que, assim que receber o prompt, irá analizar se consegue responder por conta própria. Caso negativo, irá buscar em seus agentes a resposta, podendo utilizar de funções e chaves APIs para consultar seus bancos de dados. Ao ser questionado, o código descobre qual tool o Gemini quer usar e extrai os argumentos que ele sugeriu e executa a função
 
 <br>
 
-A função que o descreve importa o Gemini 2.5 Flash, que tem maior cota diária de tokens, e lembra o histórico da conversa. Ele é um modelo rápido e econômico (nos quesitos financeiros, de limites da API (mais requisições por minuto -RPM - e mais tokens por minuto - TPM), tempo (de resposta)) e tem como customizar seu índice de foco, neste caso sendo de 0.3, para que ele evite gerar respostas desconexas do assunto. Há um contador que serve como pausa de segurança para não estourar o limite de requisições por minuto do plano gratuito e é acionado um tratamento amigável para o erro de cota se o usuário digitar rápido demais.
+A função que o descreve importa o Gemini 2.5 Flash, que tem maior cota diária de tokens, e lembra o histórico da conversa. Ele é um modelo rápido e econômico (nos quesitos financeiros, de limites da API (mais requisições por minuto - RPM - e mais tokens por minuto - TPM), tempo (de resposta)) e tem como customizar seu índice de foco, neste caso sendo de 0.3, para que ele evite gerar respostas desconexas do assunto. Há um contador que serve como pausa de segurança para não estourar o limite de requisições por minuto do plano gratuito e é acionado um tratamento amigável para o erro de cota se o usuário digitar rápido demais.
 ***
 
 ### CALCULADORA
 Esta função depende de funções específicas da biblioteca Math, que irá auxiliar a calcular contas complexas e a filtrar números e operações no comando que o usuário for inserir.
 
 <br>
-Um exemplo dessas funções é o **Dict**, que ignora tudo que começa com __ (config. interna do python);
+
+Um exemplo dessas funções é o **Dict**, que ignora tudo que começa com ****__**** (config. interna do python);
+
 **Variáveis** incluem funções absolutas do Python (função nativa (built-in) abs()) que são úteis em matemática;
-**Eval** = a string é executada como código python puro. Isso significa poder considerar apenas as equações presentes.
+
+**Eval** = a string é executada como código python puro. Isso significa poder considerar apenas as equações presentes;
+
 **builtins**: torna indisponíveis as funções padrões do python;
+
 **allowed_names**: torna disponíveis apenas as funções permitidas que foram filtradas do Math;
 Por fim, se algo for digitado errado, retornará uma mensagem de erro.
-
-### Filmes - TMDB
-Este agente irá se conectar à API do TMDB para conseguir informações específicas do título do filme que for inserido, mas primeiramente foi preciso criar uma conta no site para ter acesso à chave. Seu código inicia lendo o token que foi retirado do site oficial do TMDB, que se não for compreendido corretamente, irá retornar uma mensagem de erro.
+***
 
 <br>
+
+### FILMES - TMDB
+Este agente irá se conectar à API do TMDB para conseguir informações específicas do título do filme que for inserido, mas primeiramente foi preciso criar uma conta no site para ter acesso à chave. Seu código inicia lendo o token que foi retirado do site oficial do TMDB, que se não for compreendido corretamente, irá retornar uma mensagem de erro.
 
 Por motivos de segurança, o token é escondido dentro do header, e não exposto diretamente no link URL. URL esta que dependenderá da função **urllib**, que codificará o título do filme e irá até o server TMDB, que, se estiver fora do ar por 10 segundos, o código desiste e imprimirá um aviso de erro.
 
 <br>
 
 Ocorrerá uma verificação para ver se a busca deu certo (Status 200), então focará no primeiro resultado e serão extraídas as suas informações.
+***
 
 <br>
 
 Resultados alternativos podem incluir uma mensagem avisando a falta de tradução para português e, num contexto geral, a queda do sistema do Gemini por haver muitas requisições, que impossibilitará de responder a pergunta do usuário.
+***
 
-
+<br>
+<br>
