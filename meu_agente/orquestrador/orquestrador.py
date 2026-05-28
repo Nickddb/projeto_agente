@@ -1,15 +1,16 @@
+from agentes.calculadora import python_calculator
+from agentes.filmes import search_tmdb_movie
+
+
 import os #biblioteca padrão do Python para interagir com o SO(genrencia pastas, caminhos de arquivos)
-import requests #faz requisições HTTP
-import dotenv 
 from dotenv import load_dotenv #ler arquivos .env (esconder chaves API e senhas)
 from google import genai
 from google.genai import types #importa o SDK oficial para interagir com o Gemini
 import time  #Serve p/ o sleep
-import urllib.parse #URL encoding, transforma caracteres em códigos seguros para a web
 
 base_dir = os.path.dirname(__file__) #FILE: variável interna do Python que sabe o caminho da pasta
 dotenv_path = os.path.join(base_dir, ".env") #Path.dirname: "resume" o caminho dessa pasta
-dotenv.load_dotenv()
+load_dotenv(dotenv_path)
 
 # Inicializa o cliente padrão do Gemini (busca a chave GEMINI_API_KEY automaticamente)
 client = genai.Client()
@@ -44,6 +45,8 @@ Sua única função é analisar a mensagem do usuário e respondê-la coordenand
 3. AGENTE CRÍTICO DE CINEMA (movie_agent):
    - Atuação: Ative quando o assunto for filmes, cinema ou diretores.
    - Comportamento: Você DEVE buscar dados reais usando a ferramenta 'search_tmdb_movie'. Em seguida, monte uma resposta misturando os fatos oficiais trazidos pela ferramenta com uma análise crítica profunda e profissional da obra.
+   Você deve extrair apenas o TÍTULO PRINCIPAL do filme que o usuário deseja e usar esse título limpo na ferramenta 'search_tmdb_movie' (ex: se o usuário pedir "filme clássico cinderela disney anos 50", busque apenas por "Cinderela").
+   Depois, use os dados retornados para contextualizar com o ano ou detalhes que o usuário pediu, montando uma análise crítica profunda.
 
 Se a pergunta for vaga, informal ou totalmente fora desses três escopos, responda cordialmente informando que o assunto foge do limite operacional do sistema."""
 
@@ -117,72 +120,3 @@ def main_chat():
 
 if __name__ == "__main__": #O orquestrador (Função main) deve ser excutado primeiro
     main_chat()
-
-# ==========================================
-# 2. Calculadora
-# ==========================================
-
-def python_calculator(expression: str) -> str:
-    """Executa uma expressão matemática em Python de forma segura e retorna o resultado."""
-    import math 
-    allowed_names = {k: v for k, v in math.__dict__.items() if not k.startswith("__")}
-    allowed_names.update({"abs": abs, "round": round})
-    try:
-        result = eval(expression, {"__builtins__": None}, allowed_names)
-        return f"Resultado exato: {result}"
-    except Exception as e:
-        return f"Erro ao calcular a expressão: {str(e)}"
-
-
-# ==========================================
-# 3. Filmes - TMDB
-# ==========================================
-
-def search_tmdb_movie(title: str) -> str:
-    """Busca informações oficiais de um filme na API do TMDB usando o Token de Acesso de Leitura (JWT)."""
-    
-    API_TOKEN = os.getenv("TMDB_API_TOKEN")
-    if not API_TOKEN:
-        return "Erro: O token TMDB_API_TOKEN não foi encontrado no ambiente."
-        
-    title_clean = title.strip()
-    title_encoded = urllib.parse.quote(title_clean)
-    
-    # URL padrão sem expor a chave nos parâmetros
-    url = f"https://api.themoviedb.org/3/search/movie?query={title_encoded}&language=pt-BR"
-    
-    headers = {
-        "accept": "application/json",
-        "Authorization": f"Bearer {API_TOKEN}"
-    }
-    
-    try:
-        response = requests.get(url, headers=headers, timeout=10) 
-        data = response.json()
-        
-        if response.status_code != 200:
-            return f"Erro na API do TMDB (Status {response.status_code}): {data.get('status_message', 'Sem mensagem')}"
-            
-        if not data.get('results'):
-            return f"Nenhum filme encontrado com o título: '{title_clean}'."
-            
-        movie = data['results'][0]
-        
-        titulo_br = movie.get('title', 'Não informado')
-        titulo_orig = movie.get('original_title', 'Não informado')
-        data_lanc = movie.get('release_date', 'Data desconhecida')
-        nota = movie.get('vote_average', 'Sem nota')
-        sinopse = movie.get('overview', 'Sinopse não disponível em português.')
-        
-        if not sinopse.strip():
-            sinopse = "Sinopse não disponível em português."
-
-        return (
-            f"Título no Brasil: {titulo_br}\n"
-            f"Título Original: {titulo_orig}\n"
-            f"Data de Lançamento: {data_lanc}\n"
-            f"Nota Média: {nota}/10\n"
-            f"Sinopse Oficial: {sinopse}"
-        )
-    except Exception as e:
-        return f"Falha ao conectar ou processar os dados da API do TMDB: {str(e)}"
