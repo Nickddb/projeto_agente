@@ -3,7 +3,7 @@
 ![AI Robot](https://img.shields.io/badge/%F0%9F%A4%96-Artificial%20Intelligence-4AE8DE.svg?style=for-the-badge)
 
 ## **Sobre**
-Este projeto foi feito para testar e ampliar minhas capacidades de lidar com a tecnologia, que muda constantemente. Diferentes aplicações foram utilizadas, a fim de poder ter resultados mais precisos e completos, ajudando na formação de percepção do usuário sobre assuntos específicos. Por enquanto, há um orquestrador que irá checar os agentes que abordarãos os temas de **matemática** e **filmes** (utilizando uma API própria do TMDB).
+Este projeto foi feito para testar e ampliar minhas capacidades de lidar com a tecnologia, que muda constantemente. Diferentes aplicações foram utilizadas, a fim de poder ter resultados mais precisos e completos, ajudando na formação de percepção do usuário sobre assuntos específicos. Por enquanto, há um orquestrador que irá checar os agentes que abordarãos os temas de **biologia**, **matemática** e **filmes** (utilizando uma API própria do TMDB).
 
 <br>
 <br>
@@ -95,3 +95,72 @@ Resultados alternativos podem incluir uma mensagem avisando a falta de traduçã
 
 <br>
 <br>
+
+### BIOLOGIA
+Enquanto os outros agentes possuem códigos próprios que ditam suas ações, o orquestrador não depende de uma função que trate sobre biologia, por ele não depender de funções ou chaves API para trazer à tona dados científicamente corretos, tendo em conta que não é costume esses dados mudarem, nem serem difíceis de encontrar (e precisar de uma API para buscá-los, por exemplo).
+Ainda assim, se alguém pedir informações sobre algum tema da biologia, o chatbot irá retornar um texto completo sobre o tema.
+
+<br>
+
+Planejo melhorar este aspecto do código assim que possível, conectá-lo a alguma API que trate sobre riscos de extinção, por exemplo, ou algo mais específico que traga alguma informação legal. 
+***
+
+<br>
+<br>
+
+## **Como acessar**
+Primeiramente, este sistema está rodando a base de **Python**, então para acessá-lo, você terá que ter alguma extensão python baixada previamente.
+***
+
+<br>
+
+
+Entrar na **pasta meu_agente**
+
+cd projeto_agente/meu_agente
+***
+<br>
+
+**Criar** e **ativar** ambiente virtual
+
+**Windows:**
+
+python -m venv .venv
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.venv\Scripts\Activate.ps1
+
+<br>
+
+**Mac/Linux:**
+
+python3 -m venv .venv
+
+source .venv/bin/activate
+***
+<br>
+
+Instalar as **dependências**:
+
+pip install -r requirements.txt
+***
+
+<br>
+
+criar um **arquivo .env** dentro da **pasta orquestrador** e preenchê-lo com
+
+GEMINI_API_KEY=sua_chave_do_gemini_aqui
+TMDB_API_TOKEN=seu_token_jwt_do_tmdb_aqui
+
+Criar uma conta no TMDB para ter acesso à sua chave.
+
+Ver no Google se você tem permissão para criar sua própria chave também.
+***
+
+<br>
+
+Rodar o projeto:
+
+cd orquestrador
+
+python orquestrador.py
